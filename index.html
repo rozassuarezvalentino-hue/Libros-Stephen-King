@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07152f">
+<title>Stephen King — Trofeos de lectura</title>
+<style>
+:root{--bg:#071225;--panel:#101f3d;--line:#29436e;--gold:#f5c451;--muted:#9eb0cf;--white:#f4f7ff;--green:#65d6a4}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#142d55 0,#071225 58%);color:var(--white);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:18px 13px 45px}
+main{max-width:850px;margin:auto}.hero{text-align:center;padding:15px 8px 20px}.eyebrow{color:var(--gold);font-size:11px;letter-spacing:3px;font-weight:800}.hero h1{font-size:clamp(28px,7vw,43px);margin:8px 0 4px;letter-spacing:1px}.hero p{color:var(--muted);margin:0;font-size:14px}
+.panel{background:linear-gradient(135deg,#172e55,#0e1c37);border:1px solid var(--line);border-radius:18px;padding:17px;margin:10px 0 16px;box-shadow:0 12px 28px #0004}
+.stats{display:flex;justify-content:space-between;align-items:end;gap:12px}.big{font-size:29px;font-weight:850;color:var(--gold)}.muted{font-size:12px;color:var(--muted)}.track{height:11px;background:#071225;border-radius:20px;overflow:hidden;margin-top:12px;border:1px solid #263c60}.fill{height:100%;width:0;background:linear-gradient(90deg,#d99d2d,#ffe08a);transition:width .2s}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.tools input,.tools select,.tools button{background:#102344;color:var(--white);border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:inherit}.tools input{flex:1;min-width:145px}.tools button{cursor:pointer}
+.group{margin:23px 0}.group h2{font-size:16px;letter-spacing:1px;color:var(--gold);margin:0 0 10px}.group h2 small{color:var(--muted);font-size:11px;letter-spacing:0;font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:9px}
+.book{display:flex;align-items:center;gap:11px;background:linear-gradient(135deg,#14284a,#0e1c36);border:1px solid #263e65;border-radius:13px;padding:11px;min-height:66px;cursor:pointer;user-select:none}
+.book:active{transform:scale(.99)}.book.done{border-color:#a17c30;background:linear-gradient(135deg,#292a36,#17243c)}
+.medal{width:39px;height:39px;flex:0 0 39px;border-radius:50%;display:grid;place-items:center;background:#253b5f;color:#9bb0d1;font-size:21px;border:1px solid #3b5680}.done .medal{background:linear-gradient(145deg,#ffe18b,#bb8125);color:#382608;border-color:#ffe39a}
+.name{font-weight:650;font-size:14px;line-height:1.25}.state{font-size:10px;color:var(--muted);margin-top:4px;letter-spacing:.5px}.done .state{color:var(--green)}
+footer{color:var(--muted);font-size:11px;text-align:center;margin-top:28px;line-height:1.5}
+@media(max-width:420px){body{padding:10px 9px 35px}.tools button{flex:1}}
+</style></head>
+<body><main>
+<header class="hero"><div class="eyebrow">YOUR PERSONAL TROPHY ROOM</div><h1>STEPHEN KING</h1><p>Biblioteca personal · Desbloqueá un trofeo por cada lectura</p></header>
+<section class="panel"><div class="stats"><div><div class="muted">TROFEOS DESBLOQUEADOS</div><div class="big" id="count">0 / 0</div></div><div class="muted" id="percent">0% completado</div></div><div class="track"><div class="fill" id="bar"></div></div></section>
+<div class="tools"><input id="search" placeholder="Buscar un libro…"><select id="filter"><option value="all">Todos</option><option value="pending">Pendientes</option><option value="done">Leídos</option></select><button id="reset">Reiniciar</button></div>
+<div id="library"></div>
+<footer>El progreso se guarda automáticamente en este dispositivo.<br>Esta es una lista orientativa; podés marcar los títulos que hayas leído.</footer>
+</main>
+<script>
+const groups=[
+["SAGAS Y SERIES",[
+"El pistolero","La llegada de los tres","Las tierras baldías","Mago y cristal","El viento por la cerradura","Lobos del Calla","Canción de Susannah","La Torre Oscura",
+"El resplandor","Doctor Sueño",
+"Mr. Mercedes","Quien pierde paga","Fin de guardia","El visitante","Holly",
+"El talismán","Casa negra",
+"La caja de botones de Gwendy","La pluma mágica de Gwendy","La última misión de Gwendy",
+"La milla verde"
+]],
+["NOVELAS",[
+"Carrie","Salem's Lot","Rabia","La danza de la muerte (Apocalipsis)","La larga marcha","Ojos de fuego","Carretera maldita","Cujo","El fugitivo","Christine","Cementerio de animales","El ciclo del hombre lobo","Los ojos del dragón","Maleficio","Eso","Misery","Los tommyknockers","La mitad oscura","El juego de Gerald","Dolores Claiborne","La tienda","El retrato de Rose Madder","Desesperación","Posesión","Un saco de huesos","El cazador de sueños","Buick 8, un coche perverso","Colorado Kid","Cell","Blaze","Duma Key","La cúpula","11/22/1963","Joyland","Revival","Bellas durmientes","El Instituto","Después","Billy Summers","Cuento de hadas","La chica que amaba a Tom Gordon","Insomnia","La zona muerta","El cuerpo","Elevación"
+]],
+["CUENTOS Y NOVELAS CORTAS",[
+"El umbral de la noche","Las cuatro estaciones","Skeleton Crew (La expedición)","Después de medianoche","Pesadillas y alucinaciones","Corazones en la Atlántida","Todo es eventual","Después del anochecer","Todo oscuro, sin estrellas","El bazar de los malos sueños","La sangre manda","Si te gusta la oscuridad"
+]],
+["OTROS",["Danza macabra","Mientras escribo","Campeones mundiales al fin","Hansel y Gretel"]]
+];
+const storageKey="stephen_king_trophy_progress_v2";let completed={};
+try{completed=JSON.parse(localStorage.getItem(storageKey)||"{}")}catch(e){}
+const all=groups.flatMap(g=>g[1]);const root=document.getElementById("library");
+function persist(){try{localStorage.setItem(storageKey,JSON.stringify(completed))}catch(e){}draw()}
+function draw(){
+ const query=document.getElementById("search").value.toLocaleLowerCase("es"),filter=document.getElementById("filter").value;
+ const n=all.filter(x=>completed[x]).length;
+ document.getElementById("count").textContent=`${n} / ${all.length}`;
+ document.getElementById("percent").textContent=`${Math.round(n/all.length*100)}% completado`;
+ document.getElementById("bar").style.width=(n/all.length*100)+"%";root.replaceChildren();
+ groups.forEach(([heading,books])=>{
+  const shown=books.filter(x=>(!query||x.toLocaleLowerCase("es").includes(query))&&(filter==="all"||(filter==="done"&&completed[x])||(filter==="pending"&&!completed[x])));
+  if(!shown.length)return;
+  const section=document.createElement("section");section.className="group";
+  const h=document.createElement("h2");h.textContent=heading+" ";
+  const small=document.createElement("small");small.textContent=`${books.filter(x=>completed[x]).length}/${books.length}`;h.append(small);
+  const grid=document.createElement("div");grid.className="grid";
+  shown.forEach(book=>{
+   const card=document.createElement("div");card.className="book"+(completed[book]?" done":"");card.setAttribute("role","checkbox");card.setAttribute("aria-checked",completed[book]?"true":"false");card.tabIndex=0;
+   const medal=document.createElement("div");medal.className="medal";medal.textContent=completed[book]?"★":"☆";
+   const details=document.createElement("div");const name=document.createElement("div");name.className="name";name.textContent=book;
+   const state=document.createElement("div");state.className="state";state.textContent=completed[book]?"TROFEO DESBLOQUEADO":"BLOQUEADO · MARCAR COMO LEÍDO";
+   details.append(name,state);card.append(medal,details);
+   const toggle=()=>{completed[book]=!completed[book];persist()};
+   card.addEventListener("click",toggle);card.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggle()}});
+   grid.append(card);
+  });
+  section.append(h,grid);root.append(section);
+ });
+}
+document.getElementById("search").addEventListener("input",draw);document.getElementById("filter").addEventListener("change",draw);
+document.getElementById("reset").addEventListener("click",()=>{if(confirm("¿Querés borrar todo el progreso guardado?")){completed={};persist()}});
+draw();
+</script></body></html>
